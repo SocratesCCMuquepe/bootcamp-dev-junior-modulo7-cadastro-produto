@@ -4,9 +4,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import ao.osti.product_backend.models.Product;
-import jakarta.annotation.PostConstruct;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
