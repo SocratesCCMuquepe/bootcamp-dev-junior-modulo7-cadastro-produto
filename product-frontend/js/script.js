@@ -1,87 +1,82 @@
-$('#inputPrice').mask('000.000.000.000.000,00', {reverse: true});
+$('#inputPrice').mask('000.000.000.000.000,00', { reverse: true });
 
-function convertToNumber(priceFormat){
-    return  priceFormat.replace(/\./g, '').replace(',','.');
+function convertToNumber(priceFormat) {
+    return priceFormat.replace(/\./g, '').replace(',', '.');
 }
 
-var products = [
-    {
-        id: 1,
-        name: "Computador M1-TX",
-        description: "Intel 17, 16GB, SSD 256, HD 1T",
-        price: 4900,
-        category: 1,
-        promotion: true,
-        new: true
-    },
-    {
-        id: 2,
-        name: "Computador M2-TX",
-        description: "Intel 17, 32GB, SSD 512, HD 1T",
-        price: 5900,
-        category: 2,
-        promotion: false,
-        new: true
-    },
-    {
-        id: 3,
-        name: "Computador M1-T",
-        description: "Intel 15, 16GB, HD 1T",
-        price: 2900,
-        category: 3,
-        promotion: false,
-        new: false
-    },
-    {
-        id: 4,
-        name: "Computador LENOVO",
-        description: "Intel i9, 32GB, HD 500T",
-        price: 4800,
-        category: 3,
-        promotion: false,
-        new: true
-    }
-]
+var products = [];
 
-var categories = [
-    { id: 1, name: "Produção Própria" },
-    { id: 2, name: "Nacional" },
-    { d: 3, name: "Importado" }
-]
+var categories = [];
 
 //Onload
+loadCategories()
 loadProducts()
 
-function loadProducts(){
-    for(let prod of products){
-        addNewRow(prod);
-    }
+
+function loadCategories() {
+    var url = `http://localhost:8080/categories`;
+    var method = 'GET';
+
+
+    $.ajax({
+        url: url,
+        type: method,
+        async: false,
+        success: (response) => {
+
+            categories = response;
+            for(var cat of categories ){
+                document.getElementById("selectCategory").innerHTML += `<option value="${cat.id}">${cat.name}</option>`;
+            }
+
+        }
+    })
+}
+
+function loadProducts() {
+
+
+    var url = `http://localhost:8080/products`;
+    var method = 'GET';
+
+
+    $.getJSON(url, method, (response) => {
+
+        for (let prod of response) {
+            addNewRow(prod);
+        }
+
+    }).fail(() => {
+
+    });
+
+
 }
 
 //Salvar produtos
-function save(){
-    
+function save() {
+
     var productNew = {
-            id: products.length + 1,
-            name: document.getElementById("inputName").value,
-            description: document.getElementById("inputDescription").value,
-            price: convertToNumber(document.getElementById("inputPrice").value),
-            category: document.getElementById("selectCategory").value,
-            promotion: document.getElementById("checkboxPromotion").checked,
-            new: document.getElementById("checkboxNew").checked
+        id: products.length + 1,
+        name: document.getElementById("inputName").value,
+        description: document.getElementById("inputDescription").value,
+        price: convertToNumber(document.getElementById("inputPrice").value),
+        category: document.getElementById("selectCategory").value,
+        promotion: document.getElementById("checkboxPromotion").checked,
+        new: document.getElementById("checkboxNew").checked
     };
 
     console.log(productNew);
 
     addNewRow(productNew);
     products.push(productNew);
-    
+
     document.getElementById("formProduct").reset();
 
 }
 
 //Add new Row
-function addNewRow(prod){
+function addNewRow(prod) {
     var table = document.getElementById("productsTable");
     var newRow = table.insertRow()
 
@@ -96,12 +91,12 @@ function addNewRow(prod){
     // Insert product description
     var descriptionNode = document.createTextNode(prod.description);
     var cell = newRow.insertCell();
-    cell.className="d-none d-md-table-cell";
+    cell.className = "d-none d-md-table-cell";
     cell.appendChild(descriptionNode);
 
     // Insert product price
-    var formatter = new Intl.NumberFormat("pt-BR",{
-        style:"currency",
+    var formatter = new Intl.NumberFormat("pt-BR", {
+        style: "currency",
         currency: "BRL"
     })
 
@@ -109,22 +104,22 @@ function addNewRow(prod){
     newRow.insertCell().appendChild(priceNode);
 
     // Insert product category
-    var categoryNode = document.createTextNode(categories[prod.category - 1].name);
+    var categoryNode = document.createTextNode(categories[prod.idCategory - 1].name);
     newRow.insertCell().appendChild(categoryNode);
-    
+
     //Insert product options
     var options = '';
 
-    if(prod.promotion){
+    if (prod.promotion) {
         options = '<span class="badge bg-success me-1">P</span>';
     }
-    if(prod.new){
+    if (prod.newProduct) {
         options += '<span class="badge bg-primary">L</span>';
 
     }
-    
+
     cell = newRow.insertCell()
-    cell.className= "d-none d-md-table-cell";
+    cell.className = "d-none d-md-table-cell";
     cell.innerHTML = options;
 
     // newRow.insertCell().innerHTML = options;
