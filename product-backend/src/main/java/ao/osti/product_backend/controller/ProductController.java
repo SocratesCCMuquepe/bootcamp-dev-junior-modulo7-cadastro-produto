@@ -16,11 +16,17 @@ import org.springframework.web.bind.annotation.PathVariable;
 @RestController
 public class ProductController {
 
+    /*
+     * 
+     *  public Product(int id, String name, String description, int idCategory, boolean promotion, boolean newProduct,
+            double price) {
+     * 
+     */
     private List<Product> products = Arrays.asList(
-            new Product(1, "p1roduct Name 1", 250.60),
-            new Product(2, "Product Name 2", 74650.60),
-            new Product(3, "Product Name 3", 9936.60),
-            new Product(4, "Product Name 4", 600036.60));
+            new Product(1, "p1roduct Name 1","Nova descrição 1",1,false,false, 250.60),
+            new Product(2, "Product Name 2","Nova descrição 2",2,false,true, 74650.60),
+            new Product(3, "Product Name 3","Nova descrição 3",1,false,false, 9936.60),
+            new Product(4, "Product Name 4","Nova descrição 4",1,true,true, 600036.60));
 
    /*  @PostConstruct
     public void init() {
