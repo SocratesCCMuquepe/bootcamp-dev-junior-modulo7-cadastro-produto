@@ -25,7 +25,7 @@ function loadCategories() {
         success: (response) => {
 
             categories = response;
-            for(var cat of categories ){
+            for (var cat of categories) {
                 document.getElementById("selectCategory").innerHTML += `<option value="${cat.id}">${cat.name}</option>`;
             }
 
@@ -57,23 +57,35 @@ function loadProducts() {
 function save() {
 
     var productNew = {
-        id: products.length + 1,
         name: document.getElementById("inputName").value,
         description: document.getElementById("inputDescription").value,
         price: convertToNumber(document.getElementById("inputPrice").value),
-        category: document.getElementById("selectCategory").value,
+        idCategory: document.getElementById("selectCategory").value,
         promotion: document.getElementById("checkboxPromotion").checked,
-        new: document.getElementById("checkboxNew").checked
+        newProduct: document.getElementById("checkboxNew").checked
     };
 
-    console.log(productNew);
+    var url = `http://localhost:8080/product`;
+    var method = 'POST';
 
-    addNewRow(productNew);
-    products.push(productNew);
-
-    document.getElementById("formProduct").reset();
+    $.ajax({
+        url: url,
+        type: method,
+        contentType: "application/json",
+        data: JSON.stringify(productNew),
+        success: (product) => {
+            addNewRow(product);
+            products.push(product);
+            document.getElementById("formProduct").reset();
+            console.log(productNew);
+        },
+        error: (response) => {
+            alert("Erro ao Submeter: " + response)
+        }
+    })
 
 }
+
 
 //Add new Row
 function addNewRow(prod) {
